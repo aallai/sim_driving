@@ -8,7 +8,7 @@ from sklearn.utils import shuffle
 TRAIN_DATA_PATH = '/home/carnd/data'
 VALID_DATA_PATH = '/home/carnd/valid_data'
 IMAGE_SHAPE =(160, 320, 3)
-BATCH_SIZE = 32
+BATCH_SIZE = 64
 
 # TODO: use other features.
 class data_gen():
@@ -34,13 +34,20 @@ class data_gen():
             while len(images) < self.batch_size:
                 line = self.reader.__next__()
                 f = line[0].split('/')[-1]
-                images.append(cv2.imread('/'.join([self.data_path, 'IMG', f])))
-                angles.append(float(line[3]))
+                img = cv2.imread('/'.join([self.data_path, 'IMG', f]))
+                angle = float(line[3])
+
+                images.append(img)
+                angles.append(angle)
+
+                # Augment by flipping images.
+                images.append(np.fliplr(img))
+                angles.append(-angle)
+
         except StopIteration:
            self.reset()
 
         data, labels = np.array(images, dtype=np.float32), np.array(angles, dtype=np.float32)
-
         return shuffle(data, labels)
 
 def count_dataset(data_path):
@@ -62,7 +69,7 @@ def network():
     net.add(Lambda(lambda x: (x / 255.0) - 0.5))
     
     # Merge color channels
-    net.add(Conv2D(nb_filter=1, nb_row=1, nb_col=1, subsample=(1,1), border_mode='valid'))
+    #net.add(Conv2D(nb_filter=1, nb_row=1, nb_col=1, subsample=(1,1), border_mode='valid'))
 
     # Output: 100x300x16  
     conv1 = Conv2D(nb_filter=16, nb_row=11, nb_col=21, subsample=(1,1), border_mode='valid', bias=True)
@@ -101,7 +108,7 @@ def main():
     train_data = data_gen(TRAIN_DATA_PATH, BATCH_SIZE)
     valid_data = data_gen(VALID_DATA_PATH, BATCH_SIZE)
 
-    print("Size of training data: {}.".format(dataset_size))
+    print("Size of training data (without 2x augmentation): {}.".format(dataset_size))
     print("Size of validation data: {}.".format(validation_set_size))
 
     net.compile(loss='mse', optimizer='adam')
@@ -115,3 +122,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
