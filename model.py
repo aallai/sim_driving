@@ -17,6 +17,7 @@ class data_gen():
     def __init__(self, data_path, batch_size=128):
         self.data_path = data_path
         self.batch_size = batch_size
+        self.epsilon =0.001
         self.reset()
 
     def reset(self):
@@ -37,9 +38,13 @@ class data_gen():
                 line = self.reader.__next__()
                 f = line[0].split('/')[-1]
                 img = cv2.imread('/'.join([self.data_path, 'IMG', f]))
-                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
                 angle = float(line[3])
                 speed = float(line[6])
+
+                # Drop about half of zero samples.
+                if angle < self.epsilon and np.random.randint(2) and len(images) > 0:
+                    continue
 
                 images.append(img)
                 angles.append(angle)
