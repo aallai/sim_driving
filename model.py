@@ -1,5 +1,6 @@
+import argparse
 import keras
-from keras.models import Model
+from keras.models import Model, load_model
 from keras.layers import Input, Flatten, Dense, Activation, Lambda, Conv2D, MaxPooling2D, Dropout
 import cv2
 import csv
@@ -7,7 +8,7 @@ import numpy as np
 import sklearn
 import math
 
-TRAIN_DATA_PATH = '/home/carnd/combined_data'
+TRAIN_DATA_PATH = '/home/carnd/track2_data'
 VALID_DATA_PATH = '/home/carnd/valid_data'
 IMAGE_SHAPE =(160, 320, 3)
 BATCH_SIZE = 128
@@ -17,7 +18,7 @@ class data_gen():
     def __init__(self, data_path, batch_size=128):
         self.data_path = data_path
         self.batch_size = batch_size
-        self.epsilon =0.001
+        self.epsilon =0.0001
         self.reset()
 
     def reset(self):
@@ -38,13 +39,9 @@ class data_gen():
                 line = self.reader.__next__()
                 f = line[0].split('/')[-1]
                 img = cv2.imread('/'.join([self.data_path, 'IMG', f]))
-                img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
                 angle = float(line[3])
                 speed = float(line[6])
-
-                # Drop about half of zero samples.
-                if angle < self.epsilon and np.random.randint(2) and len(images) > 0:
-                    continue
 
                 images.append(img)
                 angles.append(angle)
@@ -79,7 +76,7 @@ def network():
     pre1 = Lambda(lambda x: x[:,50:,...])(image)
 
     # Normalize.
-    pre2 = (Lambda(lambda x: (x / [179.0, 255.0, 255.0]) - 0.5))(pre1)
+    pre2 = (Lambda(lambda x: (x / 255.0) - 0.5))(pre1)
 
     # Output: 100x300x16  
     conv1 = Conv2D(nb_filter=16, nb_row=11, nb_col=21, subsample=(1,1), border_mode='valid', bias=True)(pre2)
@@ -116,8 +113,15 @@ def network():
     out = Dense(1)(fc3)
     return Model(input=[image, speed], output=[out])
 
-def main():
-    net = network()
+def network_v2():
+
+
+def main(pretrained):
+
+    if pretrained == '':
+        net = network()
+    else:
+        net = load_model(pretrained)
 
     dataset_size = count_dataset(TRAIN_DATA_PATH)
     validation_set_size = count_dataset(VALID_DATA_PATH)
@@ -128,12 +132,15 @@ def main():
     print("Size of validation data: {}.".format(validation_set_size))
 
     net.compile(loss='mse', optimizer=keras.optimizers.Adam(lr=0.0001))
-    net.fit_generator(train_data, samples_per_epoch=dataset_size, nb_epoch=5, verbose=2, validation_data=valid_data, nb_val_samples=validation_set_size)
+    net.fit_generator(train_data, samples_per_epoch=dataset_size, nb_epoch=20, verbose=2, validation_data=valid_data, nb_val_samples=validation_set_size)
 
     net.summary()
     net.save('net.h5')
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(description='Network Training')
+    parser.add_argument('-p', '--pretrained', type=str, default = '', help='Path to h5 file for pre-trained model to fine tune.')
+    args = parser.parse_args()
 
+    main(args.pretrained)
