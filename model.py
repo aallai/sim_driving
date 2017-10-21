@@ -8,7 +8,7 @@ import numpy as np
 import sklearn
 import math
 
-TRAIN_DATA_PATH = '/home/carnd/track2_data'
+TRAIN_DATA_PATH = '/home/carnd/data'
 VALID_DATA_PATH = '/home/carnd/valid_data'
 IMAGE_SHAPE =(160, 320, 3)
 BATCH_SIZE = 128
@@ -98,23 +98,25 @@ def network():
 
     pool3 = MaxPooling2D(pool_size=(2,2), strides=(2,2), border_mode='valid')(conv3)
 
-    flat = Flatten()(pool3)
+    conv4 = Conv2D(nb_filter=128, nb_row=4, nb_col=5, subsample=(1,1), border_mode='valid', bias=True)(pool3)
+    conv4 = Activation('relu')(conv4)
+
+    pool4 = MaxPooling2D(pool_size=(2,2), strides=(2,2), border_mode='valid')(conv4)
+
+    flat = Flatten()(pool4)
     cat = keras.layers.merge([flat, speed], mode='concat')
 
-    fc1 = Dense(256)(cat)
+    fc1 = Dense(128)(cat)
     fc1 = Activation('relu')(fc1)
 
-    fc2 = Dense(256)(fc1)
+    fc2 = Dense(64)(fc1)
     fc2 = Activation('relu')(fc2)
 
-    fc3 = Dense(256)(fc2)
+    fc3 = Dense(32)(fc2)
     fc3 = Activation('relu')(fc3)
 
     out = Dense(1)(fc3)
     return Model(input=[image, speed], output=[out])
-
-def network_v2():
-
 
 def main(pretrained):
 
