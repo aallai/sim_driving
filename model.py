@@ -79,7 +79,7 @@ def network():
     pre1 = Lambda(lambda x: x[:,50:,...])(image)
 
     # Normalize.
-    pre2 = (Lambda(lambda x: (x / 255.0) - 0.5))(pre1)
+    pre2 = (Lambda(lambda x: (x / [179.0, 255.0, 255.0]) - 0.5))(pre1)
 
     # Output: 100x300x16  
     conv1 = Conv2D(nb_filter=16, nb_row=11, nb_col=21, subsample=(1,1), border_mode='valid', bias=True)(pre2)
