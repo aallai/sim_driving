@@ -18,7 +18,6 @@ class data_gen():
     def __init__(self, data_path, batch_size=128):
         self.data_path = data_path
         self.batch_size = batch_size
-        self.epsilon =0.0001
         self.reset()
 
     def reset(self):
@@ -73,10 +72,10 @@ def network():
     speed = Input((1,), dtype='float32', name='speed_input')
 
     # Crop off top third of image. Result is 110x320 image.
-    pre1 = Lambda(lambda x: x[:,50:,...])(image)
+    pre1 = Lambda(lambda x: x[:,50:,...], name='crop')(image)
 
     # Normalize.
-    pre2 = (Lambda(lambda x: (x / 255.0) - 0.5))(pre1)
+    pre2 = Lambda(lambda x: (x / 255.0) - 0.5, name='normalize')(pre1)
 
     # Output: 100x300x16  
     conv1 = Conv2D(nb_filter=16, nb_row=11, nb_col=21, subsample=(1,1), border_mode='valid', bias=True)(pre2)
@@ -137,6 +136,7 @@ def main(pretrained):
     net.fit_generator(train_data, samples_per_epoch=dataset_size, nb_epoch=20, verbose=2, validation_data=valid_data, nb_val_samples=validation_set_size)
 
     net.summary()
+    print("Writing model out to 'net.h5'")
     net.save('net.h5')
 
 
