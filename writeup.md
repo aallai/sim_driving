@@ -19,7 +19,7 @@ My network uses the current speed as input, so I modified drive.py to provide it
 
 visualization.py takes a .h5 model file and generates a png image of the model.
 
-The training and validation data should be provided as zip files name 'data.zip' and 'validation_data.zip' (not included in the github repo).
+The training and validation data should be provided as zip files named 'data.zip' and 'validation_data.zip' (not included in the github repo).
 
 The video of the car driving autonomously is 'driving_video.mp4'. It includes one lap in each driection on the first track.
 
@@ -67,7 +67,7 @@ I only use the center images for training, and I include a flipped version of ev
 
 **Final Result**
 
-Here is a gif of the car driving in auto mode. The car stays on the track, although the driving is not perfectly smooth. The video cuts halfway when I put it back into manual to turn the car around.
+Here is a gif of the car driving in auto mode. The car stays on the track, although the driving is not perfect. The car makes abrupt turns in some cases. The video cuts halfway when I put it back into manual mode to turn the car around.
 
 ![alt text][image2]
 
