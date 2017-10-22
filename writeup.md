@@ -41,7 +41,7 @@ I used an adam optimizer. I did reduce the default learning rate, that seemed to
 
 **4. Appropriate training data**
 
-I think the training data is somewhat noisy. When I was first learning to use the simulator, my driving wasn't that great. I think the data contains recorded instances of the car swerving and almost going off the road. There is also footage of the car driving through the dirt section, which probably doesn't help. My strategy was to drown out the low quality examples by collecting more data, and this seems to have worked. I tried to use the mouse as much as possible, and also tried to have the same amount clockwise and counter-clockwise driving data. I also include footage of the car driving on the second track.
+I think the training data is somewhat noisy. When I was first learning to use the simulator, my driving wasn't that great. I think the data contains recorded instances of the car swerving and almost going off the road. There is also footage of the car driving through the dirt section, which probably doesn't help. My strategy was to drown out the low quality examples by collecting more data, and this seems to have worked. I tried to use the mouse as much as possible, and also tried to have the same amount of clockwise and counter-clockwise driving data. I also included footage of the car driving on the second track.
 
 **Model Architecture and Training Strategy**
 
