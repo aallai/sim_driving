@@ -19,7 +19,7 @@ My network uses the current speed as input, so I modified drive.py to provide it
 
 visualization.py takes a .h5 model file and generates a png image of the model.
 
-The training and validation data should be provided as zip files named 'data.zip' and 'validation_data.zip' (not included in the github repo).
+The training and validation data should be provided as zip files named 'data.zip' and 'valid_data.zip' (not included in the github repo).
 
 The video of the car driving autonomously is 'driving_video.mp4'. It includes one lap in each driection on the first track.
 
