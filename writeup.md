@@ -4,6 +4,7 @@
 [//]: # (Image References)
 
 [image1]: ./model.png "Model Visualization"
+[image2]: ./driving_video.gif "Autonomous Driving Video"
 
 ## Rubric Points
 
@@ -63,3 +64,10 @@ Here is the final model visualized with Keras. As stated above, the first two la
 I drove around both tracks in both directions, using the mouse as much as possible. I also included a lot of footage of myself driving back onto the road starting from the grassy areas. The car seems to recover quite well if you manually throw it off course, and can often find its way back onto the road, if it's in the camera frame.
 
 I only use the center images for training, and I include a flipped version of every image. The data is loaded and augmented using a generator. The final training set consists of about 40,000 training examples (80,000 with augmentation) and 10,000 validation examples. The final training ran for 20 epochs, although during development I usually only ran for 5 epochs.
+
+**Final Result**
+
+Here is a gif of the car driving in auto mode. The car stays on the track, although the driving is not perfectly smooth. The video cuts halfway when I put it back into manual to turn the car around.
+
+![alt text][image2]
+
