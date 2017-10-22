@@ -1,5 +1,6 @@
+import argparse
 import keras
-from keras.models import Model
+from keras.models import Model, load_model
 from keras.layers import Input, Flatten, Dense, Activation, Lambda, Conv2D, MaxPooling2D, Dropout
 import cv2
 import csv
@@ -7,7 +8,7 @@ import numpy as np
 import sklearn
 import math
 
-TRAIN_DATA_PATH = '/home/carnd/combined_data'
+TRAIN_DATA_PATH = '/home/carnd/data'
 VALID_DATA_PATH = '/home/carnd/valid_data'
 IMAGE_SHAPE =(160, 320, 3)
 BATCH_SIZE = 128
@@ -17,6 +18,7 @@ class data_gen():
     def __init__(self, data_path, batch_size=128):
         self.data_path = data_path
         self.batch_size = batch_size
+        self.epsilon =0.0001
         self.reset()
 
     def reset(self):
@@ -96,23 +98,32 @@ def network():
 
     pool3 = MaxPooling2D(pool_size=(2,2), strides=(2,2), border_mode='valid')(conv3)
 
-    flat = Flatten()(pool3)
+    conv4 = Conv2D(nb_filter=128, nb_row=4, nb_col=5, subsample=(1,1), border_mode='valid', bias=True)(pool3)
+    conv4 = Activation('relu')(conv4)
+
+    pool4 = MaxPooling2D(pool_size=(2,2), strides=(2,2), border_mode='valid')(conv4)
+
+    flat = Flatten()(pool4)
     cat = keras.layers.merge([flat, speed], mode='concat')
 
-    fc1 = Dense(256)(cat)
+    fc1 = Dense(128)(cat)
     fc1 = Activation('relu')(fc1)
 
-    fc2 = Dense(256)(fc1)
+    fc2 = Dense(64)(fc1)
     fc2 = Activation('relu')(fc2)
 
-    fc3 = Dense(256)(fc2)
+    fc3 = Dense(32)(fc2)
     fc3 = Activation('relu')(fc3)
 
     out = Dense(1)(fc3)
     return Model(input=[image, speed], output=[out])
 
-def main():
-    net = network()
+def main(pretrained):
+
+    if pretrained == '':
+        net = network()
+    else:
+        net = load_model(pretrained)
 
     dataset_size = count_dataset(TRAIN_DATA_PATH)
     validation_set_size = count_dataset(VALID_DATA_PATH)
@@ -123,12 +134,15 @@ def main():
     print("Size of validation data: {}.".format(validation_set_size))
 
     net.compile(loss='mse', optimizer=keras.optimizers.Adam(lr=0.0001))
-    net.fit_generator(train_data, samples_per_epoch=dataset_size, nb_epoch=5, verbose=2, validation_data=valid_data, nb_val_samples=validation_set_size)
+    net.fit_generator(train_data, samples_per_epoch=dataset_size, nb_epoch=20, verbose=2, validation_data=valid_data, nb_val_samples=validation_set_size)
 
     net.summary()
     net.save('net.h5')
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(description='Network Training')
+    parser.add_argument('-p', '--pretrained', type=str, default = '', help='Path to h5 file for pre-trained model to fine tune.')
+    args = parser.parse_args()
 
+    main(args.pretrained)
