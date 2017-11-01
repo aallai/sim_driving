@@ -23,8 +23,6 @@ visualization.py takes a .h5 model file and generates a png image of the model.
 
 images.py just flips one of the data images so it can be included in the README.
 
-The training and validation data should be provided as zip files named 'data.zip' and 'valid_data.zip' (not included in the github repo).
-
 The video of the car driving autonomously is 'driving_video.mp4'. It includes one lap in each driection on the first track.
 
 The trained model itself is in 'model.h5'.
