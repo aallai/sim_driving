@@ -43,7 +43,7 @@ I used an adam optimizer. I did reduce the default learning rate, that seemed to
 
 **4. Appropriate training data**
 
-I think the training data was somewhat noisy. When I was first learning to use the simulator, my driving wasn't that great. I think the data contains recorded instances of the car swerving and almost going off the road. There is also footage of the car driving through the dirt section, which probably doesn't help. My strategy was to drown out the low quality examples by collecting more data, and this seems to have worked. I tried to use the mouse as much as possible, and also tried to have the same amount of clockwise and counter-clockwise driving data. I also included footage of the car driving on the second track.
+The original training data was somewhat noisy. With this this data, the car to drive around the track, but would occasionally swerve or significantly cross the yellow lines. I eventually remedied this by collecting cleaner data and fine tuning the original model. During data collection, I tried to use the mouse as much as possible, and also tried to have the same amount of clockwise and counter-clockwise driving data. I also included footage of the car driving on the second track.
 
 **Model Architecture and Training Strategy**
 
@@ -51,9 +51,7 @@ I think the training data was somewhat noisy. When I was first learning to use t
 
 I first started with a network of around 5 million parameters. It had 3 convolutional layers, and 3 dense layers. With the training data I had it was pretty much already able to drive around the first track. Most of the changes I did were to try to improve driving around the second track. Some things I tried were switching to HSV instead of RGB, adding current speed as input, reducing the number of parameters and adding dropout.
 
-I also experimented with dropping images with angles close to zero, but was able to acheive good performance without it.
-
-On some turns, the model would drive outside the yellows lines to cut corners. I fixed this by collecting a small dataset with just those turns, and fine-tuning the model with this dataset for a few epochs.
+I also experimented with dropping images with angles close to zero, but was able to acheive good performance without it. I also tried using the left and right camera images for recovery, but this actually worsened performance. I was using a simple hard coded adjustment to the steering angle, and most likely this parameter was not tuned correctly.
 
 I eventually tried fine tuning my first track model with a second track only data set. This model was able to drive for long stretches on the second track, but would still go off the road in certain places. I haven't included this in the interest of simplicity.
 
@@ -65,7 +63,7 @@ Here is the final model visualized with Keras. As stated above, the first two la
 
 **3. Creation of the Training Set & Training Process**
 
-I drove around both tracks in both directions, using the mouse as much as possible. I also included a lot of footage of myself driving back onto the road starting from the grassy areas. The car seems to recover quite well if you manually throw it off course, and can often find its way back onto the road, if it's in the camera frame.
+I drove around both tracks in both directions, using the mouse as much as possible. I also included a lot of footage of myself driving back onto the road starting from the grassy areas. The car seems to recover quite well if you manually throw it off course, and can sometimes find its way back onto the road, if it's in the camera frame.
 
 I only use the center images for training, and I include a flipped version of every image. The data is loaded and augmented using a generator. The final training set consists of about 40,000 training examples (80,000 with augmentation) and 10,000 validation examples. The final training ran for 20 epochs, although during development I usually only ran for 5 epochs.
 
