@@ -43,7 +43,7 @@ I used an adam optimizer. I did reduce the default learning rate, that seemed to
 
 **4. Appropriate training data**
 
-The original training data was somewhat noisy. With this this data, the car to drive around the track, but would occasionally swerve or significantly cross the yellow lines. I eventually remedied this by collecting cleaner data and fine tuning the original model. During data collection, I tried to use the mouse as much as possible, and also tried to have the same amount of clockwise and counter-clockwise driving data. I also included footage of the car driving on the second track.
+The original training data was somewhat noisy. With this this data, the car could drive around the track, but would occasionally swerve or significantly cross the yellow lines. I eventually reduced these problems by collecting cleaner data and fine tuning the original model. During data collection, I tried to use the mouse as much as possible, and also tried to have the same amount of clockwise and counter-clockwise driving data. I also included footage of the car driving on the second track.
 
 **Model Architecture and Training Strategy**
 
